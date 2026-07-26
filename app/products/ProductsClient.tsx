@@ -3,11 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
-export default function ProductsClient({
-  products,
-}: {
-  products: any[];
-}) {
+export default function ProductsClient({ products }: { products: any[] }) {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("all");
   const [sort, setSort] = useState("newest");
@@ -16,7 +12,6 @@ export default function ProductsClient({
 
   useEffect(() => {
     const saved = localStorage.getItem("marketpilot-favorites");
-
     if (saved) {
       try {
         setFavorites(JSON.parse(saved));
@@ -31,12 +26,7 @@ export default function ProductsClient({
       const next = current.includes(id)
         ? current.filter((item) => item !== id)
         : [...current, id];
-
-      localStorage.setItem(
-        "marketpilot-favorites",
-        JSON.stringify(next)
-      );
-
+      localStorage.setItem("marketpilot-favorites", JSON.stringify(next));
       return next;
     });
   }
@@ -57,52 +47,26 @@ export default function ProductsClient({
       const title = String(item.title || "").toLowerCase();
       const itemCategory = String(item.category || "");
 
-      const matchesSearch = title.includes(
-        search.toLowerCase().trim()
-      );
+      const matchesSearch = title.includes(search.toLowerCase().trim());
+      const matchesCategory = category === "all" || itemCategory === category;
+      const matchesFavorite = !favoritesOnly || favorites.includes(id);
 
-      const matchesCategory =
-        category === "all" || itemCategory === category;
-
-      const matchesFavorite =
-        !favoritesOnly || favorites.includes(id);
-
-      return (
-        matchesSearch &&
-        matchesCategory &&
-        matchesFavorite
-      );
+      return matchesSearch && matchesCategory && matchesFavorite;
     });
 
     return [...result].sort((a, b) => {
       if (sort === "price-low") {
         return Number(a.price || 0) - Number(b.price || 0);
       }
-
       if (sort === "price-high") {
         return Number(b.price || 0) - Number(a.price || 0);
       }
-
       if (sort === "oldest") {
-        return (
-          new Date(a.createdAt).getTime() -
-          new Date(b.createdAt).getTime()
-        );
+        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
       }
-
-      return (
-        new Date(b.createdAt).getTime() -
-        new Date(a.createdAt).getTime()
-      );
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
-  }, [
-    products,
-    search,
-    category,
-    sort,
-    favoritesOnly,
-    favorites,
-  ]);
+  }, [products, search, category, sort, favoritesOnly, favorites]);
 
   function resetFilters() {
     setSearch("");
@@ -116,8 +80,7 @@ export default function ProductsClient({
       <div
         style={{
           display: "grid",
-          gridTemplateColumns:
-            "minmax(240px, 2fr) minmax(180px, 1fr) minmax(190px, 1fr) auto auto",
+          gridTemplateColumns: "minmax(240px, 2fr) minmax(180px, 1fr) minmax(190px, 1fr) auto auto",
           gap: "12px",
           marginBottom: "18px",
           alignItems: "center",
@@ -130,13 +93,8 @@ export default function ProductsClient({
           style={controlStyle}
         />
 
-        <select
-          value={category}
-          onChange={(event) => setCategory(event.target.value)}
-          style={controlStyle}
-        >
+        <select value={category} onChange={(event) => setCategory(event.target.value)} style={controlStyle}>
           <option value="all">Все категории</option>
-
           {categories.map((item) => (
             <option key={String(item)} value={String(item)}>
               {String(item)}
@@ -144,11 +102,7 @@ export default function ProductsClient({
           ))}
         </select>
 
-        <select
-          value={sort}
-          onChange={(event) => setSort(event.target.value)}
-          style={controlStyle}
-        >
+        <select value={sort} onChange={(event) => setSort(event.target.value)} style={controlStyle}>
           <option value="newest">Сначала новые</option>
           <option value="oldest">Сначала старые</option>
           <option value="price-low">Цена: по возрастанию</option>
@@ -166,25 +120,13 @@ export default function ProductsClient({
           {favoritesOnly ? "❤️ Избранные" : "🤍 Избранное"}
         </button>
 
-        <button
-          type="button"
-          onClick={resetFilters}
-          style={buttonStyle}
-        >
+        <button type="button" onClick={resetFilters} style={buttonStyle}>
           Сбросить
         </button>
       </div>
 
-      <p
-        style={{
-          color: "#94a3b8",
-          marginBottom: "25px",
-        }}
-      >
-        Найдено товаров:{" "}
-        <strong style={{ color: "white" }}>
-          {filteredProducts.length}
-        </strong>
+      <p style={{ color: "#94a3b8", marginBottom: "25px" }}>
+        Найдено товаров: <strong style={{ color: "white" }}>{filteredProducts.length}</strong>
       </p>
 
       {filteredProducts.length === 0 ? (
@@ -198,18 +140,14 @@ export default function ProductsClient({
             color: "#94a3b8",
           }}
         >
-          <div style={{ fontSize: "48px", marginBottom: "12px" }}>
-            🔍
-          </div>
-
+          <div style={{ fontSize: "48px", marginBottom: "12px" }}>🔍</div>
           Товары по заданным фильтрам не найдены.
         </div>
       ) : (
         <div
           style={{
             display: "grid",
-            gridTemplateColumns:
-              "repeat(auto-fill, minmax(320px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
             gap: "20px",
           }}
         >
@@ -219,7 +157,6 @@ export default function ProductsClient({
 
             return (
               <article
-  className="product-card"
                 key={item.id}
                 style={{
                   position: "relative",
@@ -234,11 +171,7 @@ export default function ProductsClient({
                 <button
                   type="button"
                   onClick={() => toggleFavorite(id)}
-                  title={
-                    isFavorite
-                      ? "Убрать из избранного"
-                      : "Добавить в избранное"
-                  }
+                  title={isFavorite ? "Убрать из избранного" : "Добавить в избранное"}
                   style={{
                     position: "absolute",
                     top: "30px",
@@ -259,7 +192,6 @@ export default function ProductsClient({
 
                 {item.imageUrl ? (
                   <img
-                    className="product-image"
                     src={item.imageUrl}
                     alt={item.title}
                     style={{
@@ -288,120 +220,77 @@ export default function ProductsClient({
                   </div>
                 )}
 
-                <h2
-                  style={{
-                    color: "#38bdf8",
-                    marginTop: 0,
-                    marginBottom: "12px",
-                  }}
-                >
-                  📦 {item.title}
-                </h2>
+                <h2 style={{ color: "#38bdf8", marginTop: 0, marginBottom: "12px" }}>📦 {item.title}</h2>
+                <p style={{ margin: "5px 0" }}>🏷️ {item.category || "Без категории"}</p>
 
-                <p style={{ margin: "5px 0" }}>
-                  🏷️ {item.category || "Без категории"}
+                <div style={{ margin: "8px 0" }}>
+                  {Number(item.discount || 0) > 0 && (
+                    <span
+                      style={{
+                        display: "inline-block",
+                        marginBottom: "8px",
+                        background: "#dc2626",
+                        color: "white",
+                        padding: "5px 10px",
+                        borderRadius: "8px",
+                        fontSize: "14px",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      🔥 -{item.discount}%
+                    </span>
+                  )}
+                  {Number(item.oldPrice || 0) > Number(item.price || 0) && (
+                    <p style={{ margin: "0 0 4px", color: "#94a3b8", textDecoration: "line-through", fontSize: "16px" }}>
+                      {item.oldPrice} грн
+                    </p>
+                  )}
+                  <p style={{ margin: 0, color: "#22c55e", fontSize: "24px", fontWeight: "bold" }}>
+                    💰 {item.price} грн
+                  </p>
+                </div>
+
+                <p style={{ color: "#94a3b8", margin: "5px 0" }}>
+                  📅 {new Date(item.createdAt).toLocaleString("ru-RU")}
                 </p>
 
                 <div
-  style={{
-    margin: "8px 0",
-  }}
->
-  {Number(item.discount || 0) > 0 && (
-    <span
-      style={{
-        display: "inline-block",
-        marginBottom: "8px",
-        background: "#dc2626",
-        color: "white",
-        padding: "5px 10px",
-        borderRadius: "8px",
-        fontSize: "14px",
-        fontWeight: "bold",
-      }}
-    >
-      🔥 -{item.discount}%
-    </span>
-  )}
-
-  {Number(item.oldPrice || 0) > Number(item.price || 0) && (
-    <p
-      style={{
-        margin: "0 0 4px",
-        color: "#94a3b8",
-        textDecoration: "line-through",
-        fontSize: "16px",
-      }}
-    >
-      {item.oldPrice} грн
-    </p>
-  )}
-
-  <p
-    style={{
-      margin: 0,
-      color: "#22c55e",
-      fontSize: "24px",
-      fontWeight: "bold",
-    }}
-  >
-    💰 {item.price} грн
-  </p>
-</div>
-                <p
                   style={{
-                    color: "#94a3b8",
-                    margin: "5px 0",
+                    marginTop: "14px",
+                    paddingTop: "14px",
+                    borderTop: "1px solid #334155",
+                    display: "grid",
+                    gap: "8px",
                   }}
-                
                 >
-                  📅{" "}
-                  {new Date(item.createdAt).toLocaleString("ru-RU")}
-                </p>
-                <div
-  style={{
-    marginTop: "14px",
-    paddingTop: "14px",
-    borderTop: "1px solid #334155",
-    display: "grid",
-    gap: "8px",
-  }}
->
-  <p style={{ margin: 0, color: "#facc15" }}>
-    ⭐ {Number(item.rating || 5).toFixed(1)}
-  </p>
+                  <p style={{ margin: 0, color: "#facc15" }}>⭐ {Number(item.rating || 5).toFixed(1)}</p>
+                  <p style={{ margin: 0, color: "#94a3b8" }}>👁️ {Number(item.views || 0)} просмотров</p>
+                  <p
+                    style={{
+                      margin: 0,
+                      color: Number(item.stock ?? 1) > 0 ? "#22c55e" : "#ef4444",
+                    }}
+                  >
+                    {Number(item.stock ?? 1) > 0
+                      ? `🛒 В наличии: ${Number(item.stock ?? 1)} шт.`
+                      : "❌ Нет в наличии"}
+                  </p>
+                </div>
 
-  <p style={{ margin: 0, color: "#94a3b8" }}>
-    👁️ {Number(item.views || 0)} просмотров
-  </p>
-
-  <p
-    style={{
-      margin: 0,
-      color:
-        Number(item.stock ?? 1) > 0
-          ? "#22c55e"
-          : "#ef4444",
-    }}
-  >
-    {Number(item.stock ?? 1) > 0
-      ? `🛒 В наличии: ${Number(item.stock ?? 1)} шт.`
-      : "❌ Нет в наличии"}
-  </p>
-</div>
-
+                {/* Це єдиний правильний Link – без дублікатів */}
                 <Link
-  className="product-open-button"
-href={`/products/${item.id}`}
-style={{ display: 'inline-block',
-   alignSelf: 'flex-start',
-    marginTop: '20px', background: '#2563eb', 
-    color: 'white', 
-    textDecoration: 'none', 
-    padding: '11px 20px', 
-    borderRadius: '9px', 
-    fontWeight: 'bold' 
-  }}
+                  href={`/products/${item.id}`}
+                  style={{
+                    display: "inline-block",
+                    alignSelf: "flex-start",
+                    marginTop: "20px",
+                    background: "#2563eb",
+                    color: "white",
+                    textDecoration: "none",
+                    padding: "11px 20px",
+                    borderRadius: "9px",
+                    fontWeight: "bold",
+                  }}
                 >
                   Открыть
                 </Link>
