@@ -1,0 +1,29 @@
+[
+  {
+    "customer": {
+      "name": "Влад",
+      "phone": "380960322320",
+      "email": "tihenky@gmail.com",
+      "city": "Днепр",
+      "warehouse": "Новая почта 1"
+    },
+    "payment": "cash",
+    "comment": "Бистрая отправка ",
+    "products": [
+      {
+        "id": "1783628030318",
+        "title": "Картина ",
+        "price": "950",
+        "imageUrl": "/uploads/1783627670588-ChatGPT Image 21 трав. 2026 р., 19_25_18.png",
+        "quantity": 2
+      }
+    ],
+    "productsTotal": 1900,
+    "deliveryPrice": 100,
+    "total": 2000,
+    "id": 1783780610737,
+    "orderNumber": "MP-1783780610737",
+    "status": "Новый",
+    "createdAt": "2026-07-11T14:36:50.737Z"
+  }
+]

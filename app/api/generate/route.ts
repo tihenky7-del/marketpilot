@@ -1,16 +1,17 @@
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
+import fs from "fs";
+import path from "path";
 
 export async function POST(req: Request) {
   try {
-    const { title, category, price, description } = await req.json();
-
-    if (!process.env.OPENAI_API_KEY) {
-      return NextResponse.json({
-        success: false,
-        description: "API ключ OpenAI не найден. Проверь файл .env.local",
-      });
-    }
+    const {
+  title,
+  category,
+  price,
+  description,
+  imageUrl,
+} = await req.json();
 
     const openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
@@ -21,31 +22,62 @@ export async function POST(req: Request) {
       messages: [
         {
           role: "user",
-          content: `Создай продающее описание товара:
+          content: `
+Создай карточку товара на русском языке.
 
-Название: ${title}
+Название товара: ${title}
 Категория: ${category}
 Цена: ${price}
-Описание: ${description}
+Краткое описание: ${description}
 
-Дай:
+Сделай ответ в таком формате:
+
 1. Описание
+Напиши продающее описание товара.
+
 2. SEO ключи
-3. Рекламный текст`,
+Подбери SEO ключи через запятую.
+
+3. Рекламный текст
+Напиши короткий рекламный текст для соцсетей.
+          `,
         },
       ],
     });
 
+    const result = response.choices[0].message.content || "";
+
+    const filePath = path.join(process.cwd(), "data", "generations.json");
+
+    let history = [];
+
+    if (fs.existsSync(filePath)) {
+      history = JSON.parse(fs.readFileSync(filePath, "utf8"));
+    }
+
+    history.unshift({
+  id: Date.now(),
+  createdAt: new Date().toISOString(),
+  title,
+  category,
+  price,
+  description,
+  imageUrl,
+  result,
+});
+
+    fs.writeFileSync(filePath, JSON.stringify(history, null, 2));
+
     return NextResponse.json({
       success: true,
-      description: response.choices[0].message.content,
+      description: result,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("OPENAI ERROR:", error);
 
     return NextResponse.json({
       success: false,
-      description: "Ошибка OpenAI. Проверь ключ, баланс или интернет.",
+      description: error?.message || "Ошибка OpenAI",
     });
   }
 }
