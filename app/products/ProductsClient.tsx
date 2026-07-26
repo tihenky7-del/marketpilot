@@ -392,19 +392,8 @@ export default function ProductsClient({
 
                 <Link
   className="product-open-button"
-  href={`/products/${item.id}`}
-                  href={`/products/${item.id}`}
-                  style={{
-                    display: "inline-block",
-                    alignSelf: "flex-start",
-                    marginTop: "20px",
-                    background: "#2563eb",
-                    color: "white",
-                    textDecoration: "none",
-                    padding: "11px 20px",
-                    borderRadius: "9px",
-                    fontWeight: "bold",
-                  }}
+href={`/products/${item.id}`}
+style={{ display: 'inline-block', alignSelf: 'flex-start', marginTop: '20px', background: '#2563eb', color: 'white', textDecoration: 'none', padding: '11px 20px', borderRadius: '9px', fontWeight: 'bold' }}
                 >
                   Открыть
                 </Link>
